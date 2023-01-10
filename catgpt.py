@@ -27,24 +27,50 @@ def generate_nyaa():
 
 
 def generate_mew():
-    n = randint(1, 6)
-    return 'mew' * n
+    return 'mew' * randint(1, 6)
 
 
 def generate_meow():
-    n = randint(1, 6)
-    return 'meow' * n
+    return 'meow' * randint(1, 6)
+
+
+def generate_chinese():
+    return '喵' * randint(1, 6)
+
+
+def generate_japanese():
+    return 'ニャン' * randint(1, 3)
+
+
+def generate_spanish():
+    return 'ña' * randint(1, 6)
+
+
+def pick_generator():
+    if randint(1, 10) == 1:
+        return choice([
+            generate_spanish,
+            generate_chinese,
+            generate_japanese,
+        ])
+
+    return choice([
+        generate_nyaa,
+        generate_nyaa,
+        generate_nyaa,
+        generate_mew,
+        generate_mew,
+        generate_mew,
+        generate_meow,
+        generate_meow,
+        generate_meow,
+    ])
 
 
 def generate_any():
     return ' '.join([
-        choice([
-            generate_nyaa,
-            generate_mew,
-            generate_meow,
-        ])()
-
-        for i in range(randint(1, 3) * randint(1, 3))
+        pick_generator()()
+        for i in range(randint(1, 10))
     ])
 
 
