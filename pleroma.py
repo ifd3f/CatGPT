@@ -157,4 +157,4 @@ class Pleroma:
 	async def stream_mentions(self):
 		async for notif in self.stream_notifications():
 			if notif['type'] == 'mention':
-				yield 
+				yield notif

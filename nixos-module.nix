@@ -48,7 +48,7 @@ in with lib; {
     };
 
     systemd.services.catgpt = {
-      description = "Technology Prediction Pleroma Bot";
+      description = "CatGPT Pleroma Bot";
       wants = [ "catgpt-config.service" ];
       path = with pkgs; [ catgpt ];
       environment = {
@@ -58,7 +58,33 @@ in with lib; {
 
       script = ''
         export ACCESS_TOKEN="$(cat "$ACCESS_TOKEN_PATH")"
-        ${pkgs.catgpt}/bin/catgpt.py
+        catgpt.py post
+      '';
+
+      unitConfig = {
+        # Access token file must exist to run this service 
+        ConditionPathExists = [ cfg.accessTokenFile ];
+      };
+
+      serviceConfig = {
+        User = cfg.user;
+        Group = cfg.group;
+      };
+    };
+
+    systemd.services.catgpt-reply = {
+      description = "CatGPT Pleroma Bot Reply Service";
+      wants = [ "catgpt-config.service" ];
+      wantedBy = [ "network-online.target" ];
+      path = with pkgs; [ catgpt ];
+      environment = {
+        SERVER_URL = cfg.server;
+        ACCESS_TOKEN_PATH = cfg.accessTokenFile;
+      };
+
+      script = ''
+        export ACCESS_TOKEN="$(cat "$ACCESS_TOKEN_PATH")"
+        catgpt.py reply
       '';
 
       unitConfig = {

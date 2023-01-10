@@ -11,13 +11,35 @@ from pleroma import Pleroma
 
 
 async def main():
-    msg = generate_any()
-    print(msg)
+    if len(sys.argv) != 2:
+        print(f'Usage: {sys.argv[0]} {{reply, post}}')
+        sys.exit(-1)
 
+    match sys.argv[1]:
+        case 'post':
+            msg = generate_any()
+            print(msg)
+            async with mk_pleroma() as pl:
+                await pl.post(msg, visibility='unlisted')
+
+        case 'reply':
+            async with mk_pleroma() as pl:
+                await reply_loop(pl)
+
+
+async def reply_loop(pleroma: Pleroma):
+    print("Listening to notifications...")
+    async for notification in pleroma.stream_mentions():
+        status = notification['status']
+        print(f"Handling notification {status['uri']}")
+        toot = generate_any()
+        await pleroma.reply(status, toot)
+
+
+def mk_pleroma() -> Pleroma:
     server_url = os.environ["SERVER_URL"]
     access_token = os.environ["ACCESS_TOKEN"]
-    async with Pleroma(api_base_url=server_url, access_token=access_token) as pl:
-        await pl.post(msg, visibility='unlisted')
+    return Pleroma(api_base_url=server_url, access_token=access_token)
 
 
 def generate_nyaa():
