@@ -77,6 +77,12 @@ in with lib; {
       wants = [ "catgpt-config.service" ];
       wantedBy = [ "network-online.target" ];
       path = with pkgs; [ catgpt ];
+
+      startLimitIntervalSec = 500;
+      startLimitBurst = 5;
+
+      serviceConfig.Restart = "on-failure";
+
       environment = {
         SERVER_URL = cfg.server;
         ACCESS_TOKEN_PATH = cfg.accessTokenFile;
