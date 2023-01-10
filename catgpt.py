@@ -7,7 +7,11 @@ import sys
 from datetime import datetime
 from random import choice, randint
 
-from pleroma import Pleroma
+from pleroma import Pleroma, BadRequest
+
+
+MAX_THREAD_LENGTH = 20
+MAX_RETRIES = 5
 
 
 async def main():
@@ -28,12 +32,47 @@ async def main():
 
 
 async def reply_loop(pleroma: Pleroma):
+    myself = (await pleroma.me())['id']
+    print(f"I am ID {myself}")
     print("Listening to notifications...")
+
     async for notification in pleroma.stream_mentions():
-        status = notification['status']
-        print(f"Handling notification {status['uri']}")
-        toot = generate_any()
-        await pleroma.reply(status, toot)
+        retries = 0
+        try:
+            print(f"Handling notification {notification['status']['id']}")
+            await handle_notif(pleroma, myself, notification)
+        except BadRequest:
+            if retries >= MAX_RETRIES:
+                print("  Max retries reached, skipping this post")
+                continue
+
+            retries += 1
+            print(f"  Attempt {retries} failed, backing off and retrying")
+            await asyncio.sleep(2 ** retries)
+
+
+async def handle_notif(pleroma, myself, notification):
+    post_id = notification['status']['id']
+
+    context = await pleroma.status_context(post_id)
+    length = get_thread_length(context, myself, MAX_THREAD_LENGTH)
+    print(f"  Thread length is {length}")
+    if length:
+        print("  Reached max thread length, refusing to reply")
+        return
+
+    toot = generate_any()
+    await pleroma.reply(notification['status'], toot)
+
+
+def get_thread_length(context, myself, max_thread: int) -> bool:
+    posts = 0
+    for post in context['ancestors']:
+        if post['account']['id'] == myself:
+            posts += 1
+        if posts >= max_thread:
+            return posts
+    return posts
 
 
 def mk_pleroma() -> Pleroma:
@@ -78,13 +117,7 @@ def pick_generator():
 
     return choice([
         generate_nyaa,
-        generate_nyaa,
-        generate_nyaa,
         generate_mew,
-        generate_mew,
-        generate_mew,
-        generate_meow,
-        generate_meow,
         generate_meow,
     ])
 
