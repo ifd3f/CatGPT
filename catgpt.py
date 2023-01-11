@@ -57,9 +57,9 @@ async def handle_notif(pleroma, myself, notification):
     post_id = notification['status']['id']
 
     context = await pleroma.status_context(post_id)
-    length = get_thread_length(context, myself, MAX_THREAD_LENGTH)
+    length = get_thread_length(context, myself)
     print(f"  Thread length is {length}")
-    if length:
+    if length >= MAX_THREAD_LENGTH:
         print("  Reached max thread length, refusing to reply")
         return
 
@@ -68,13 +68,11 @@ async def handle_notif(pleroma, myself, notification):
     await pleroma.reply(notification['status'], toot)
 
 
-def get_thread_length(context, myself, max_thread: int) -> bool:
+def get_thread_length(context, myself) -> int:
     posts = 0
     for post in context['ancestors']:
         if post['account']['id'] == myself:
             posts += 1
-        if posts >= max_thread:
-            return posts
     return posts
 
 
