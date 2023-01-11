@@ -37,19 +37,20 @@ async def reply_loop(pleroma: Pleroma):
     print(f"I am ID {myself}")
     print("Listening to notifications...")
 
-    async for notification in pleroma.stream_mentions():
-        retries = 0
-        try:
-            print(f"Handling notification {notification['status']['id']}")
-            await handle_notif(pleroma, myself, notification)
-        except BadRequest:
-            if retries >= MAX_RETRIES:
-                print("  Max retries reached, skipping this post")
-                continue
+    while True:
+        async for notification in pleroma.stream_mentions():
+            retries = 0
+            try:
+                print(f"Handling notification {notification['status']['id']}")
+                await handle_notif(pleroma, myself, notification)
+            except BadRequest:
+                if retries >= MAX_RETRIES:
+                    print("  Max retries reached, skipping this post")
+                    continue
 
-            retries += 1
-            print(f"  Attempt {retries} failed, backing off and retrying")
-            await asyncio.sleep(2 ** retries)
+                retries += 1
+                print(f"  Attempt {retries} failed, backing off and retrying")
+                await asyncio.sleep(2 ** retries)
 
 
 async def handle_notif(pleroma, myself, notification):
