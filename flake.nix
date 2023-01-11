@@ -18,7 +18,7 @@
       in {
         packages.catgpt = with pkgs;
           stdenvNoCC.mkDerivation {
-            pname = "year-of-bot";
+            pname = "catgpt";
             version = "0.1.0";
 
             src = ./.;
@@ -40,7 +40,8 @@
             '';
 
             meta = {
-              description = "A Pleroma bot that mews at you.";
+              description =
+                "An advanced Pleroma bot that can hold a conversation with a cat.";
               mainProgram = "catgpt.py";
               license = lib.licenses.agpl3Only;
             };

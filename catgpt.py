@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3 -u
 
 import asyncio
 import os
@@ -27,6 +27,7 @@ async def main():
                 await pl.post(msg, visibility='unlisted')
 
         case 'reply':
+            print("Starting reply loop...")
             async with mk_pleroma() as pl:
                 await reply_loop(pl)
 
@@ -62,6 +63,7 @@ async def handle_notif(pleroma, myself, notification):
         return
 
     toot = generate_any()
+    print(toot)
     await pleroma.reply(notification['status'], toot)
 
 
