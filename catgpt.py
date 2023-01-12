@@ -82,40 +82,28 @@ def mk_pleroma() -> Pleroma:
     return Pleroma(api_base_url=server_url, access_token=access_token)
 
 
-def generate_nyaa():
-    m = randint(1, 6)
-    n = randint(1, 15)
-    return 'nya' * m + 'ny' + 'a' * n
-
-
-def generate_mew():
-    return 'mew' * randint(1, 6)
-
-
-def generate_meow():
-    return 'meow' * randint(1, 6)
-
-
 def pick_generator():
     if randint(1, 15) == 1:
         return choice([
-            lambda: "ня" * randint(1, 6),
-            lambda: "ニャン" * randint(1, 6),
-            lambda: "喵" * randint(1, 6),
-            lambda: "ña" * randint(1, 6)
+            lambda: "ня" * randint(1, 4),
+            lambda: "ニャン" * randint(1, 4),
+            lambda: "喵" * randint(1, 4),
+            lambda: "ña" * randint(1, 4)
         ])
 
     return choice([
-        generate_nyaa,
-        generate_mew,
-        generate_meow,
+        lambda: 'meow' * randint(1, 3),
+        lambda: 'mew' * randint(1, 3),
+        lambda: 'miau' * randint(1, 3),
+        lambda: 'nya' * randint(1, 3),
+        lambda: 'nya' * randint(1, 3) + 'ny' + 'a' * randint(1, 10),
     ])
 
 
 def generate_any():
     return ' '.join([
         pick_generator()()
-        for i in range(randint(1, 8))
+        for i in range(randint(1, 12))
     ])
 
 
