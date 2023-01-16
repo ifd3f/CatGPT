@@ -101,6 +101,9 @@ in with lib; {
       serviceConfig = {
         User = cfg.user;
         Group = cfg.group;
+
+        Restart = "always";
+        RestartSec = 30;
       };
     };
 

@@ -4,7 +4,6 @@ import asyncio
 import os
 import sys
 
-from datetime import datetime
 from random import choice, randint
 
 from pleroma import Pleroma, BadRequest
