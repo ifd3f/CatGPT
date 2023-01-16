@@ -81,8 +81,6 @@ in with lib; {
       startLimitIntervalSec = 500;
       startLimitBurst = 5;
 
-      serviceConfig.Restart = "on-failure";
-
       environment = {
         SERVER_URL = cfg.server;
         ACCESS_TOKEN_PATH = cfg.accessTokenFile;
@@ -103,7 +101,7 @@ in with lib; {
         Group = cfg.group;
 
         Restart = "always";
-        RestartSec = 30;
+        RestartSec = 10;
       };
     };
 
