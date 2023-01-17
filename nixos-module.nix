@@ -100,6 +100,7 @@ in with lib; {
         User = cfg.user;
         Group = cfg.group;
 
+        StartLimitIntervalSec = 0; # do not give up on restarting
         Restart = "always";
         RestartSec = 10;
       };

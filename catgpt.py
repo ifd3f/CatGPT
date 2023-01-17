@@ -5,10 +5,12 @@ import os
 import sys
 
 from random import choice, randint
+import traceback
 
 from pleroma import Pleroma, BadRequest
 
 
+LOOP_COOLDOWN_TIME = 5
 MAX_THREAD_LENGTH = 20
 MAX_RETRIES = 5
 
@@ -27,8 +29,14 @@ async def main():
 
         case 'reply':
             print("Starting reply loop...")
-            async with mk_pleroma() as pl:
-                await reply_loop(pl)
+            while True:
+                try:
+                    async with mk_pleroma() as pl:
+                        await reply_loop(pl)
+                except Exception as e:
+                    traceback.print_exception(e)
+                    print(f"Waiting {LOOP_COOLDOWN_TIME}s before restarting the loop...")
+                    await asyncio.sleep(LOOP_COOLDOWN_TIME)
 
 
 async def reply_loop(pleroma: Pleroma):
