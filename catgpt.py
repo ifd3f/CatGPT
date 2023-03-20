@@ -96,7 +96,8 @@ def pick_generator():
             lambda: "ニャン" * randint(1, 4),
             lambda: "喵" * randint(1, 4),
             lambda: "ña" * randint(1, 4),
-            lambda: "ڽا" * randint(1, 4)
+            lambda: "ڽا" * randint(1, 4),
+            lambda: "ম্যাও" * randint(1, 4)
         ])
 
     return choice([
