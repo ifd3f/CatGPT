@@ -107,7 +107,7 @@ def pick_generator():
         lambda: 'miaou' * randint(1, 3),
         lambda: 'miao' * randint(1, 3),
         lambda: 'nya' * randint(1, 3),
-        lambda: 'm' + 'r' * randint(1, 6) * 'p',
+        lambda: 'm' + 'r' * randint(1, 6) + 'p',
         lambda: 'pur' + 'r' * randint(1, 6),
         lambda: 'nya' * randint(1, 3) + 'ny' + 'a' * randint(1, 10),
     ])
